@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-08-07T14:24:31" hostname="LAPTOP-HIB84H57" time="0.104">
+  <properties/>
+  <testcase name="start" classname="Test" time="0.104"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+> /help
+The program calculates the sum of numbers
+> 
+> /exit
+Bye!
+?[1;31m
+Start test 2?[0m
+> 7 + 1 + 4
+12
+> 23 - 17 - 13
+-7
+> 33 + 21 + 11 + 49 - 32 - 9 + 1 - 80 + 4
+-2
+> 101
+101
+> -302
+-302
+> 
+> 10 - 7 - 3
+0
+> 5 --- 2 ++++++ 4 -- 2 ---- 1
+10
+> /exit
+Bye!
+?[1;31m
+Start test 3?[0m
+> 123+
+Invalid expression
+> 321-
+Invalid expression
+> +7
+7
+> /exit
+Bye!
+?[1;31m
+Start test 4?[0m
+> abc
+Invalid expression
+> one + two + three
+Invalid expression
+> /go
+Unknown command
+> /exit
+Bye!
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

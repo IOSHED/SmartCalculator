@@ -1,0 +1,381 @@
+type: edu
+custom_name: stage6
+files:
+- name: src/calculator/Main.kt
+  visible: true
+  text: "\n\nfun main() {    // главная функция программы\n\n     // Создаём основ\
+    ной цыкл программы. Мы его сможем закончить при помощи - break@Loop и прервать\
+    \ - continue@Loop\n    Loop@while(true) {\n        // print(\">>> \")     // в\
+    ывод для красивого ввода\n\n         // Принемаем ввод от пользователя, раздел\
+    яем его по поробелам создаём строковый лист из значений\n        val inputList\
+    \ = readln().split(\" \").toMutableList()\n        when {\n\n             // Е\
+    сли пользователь введёт команду \"/help\",то пользователь получит всю ему необ\
+    ходимую информацию\n            \"/help\" in inputList -> {\n                println(\"\
+    The program calculates the sum of numbers\"); continue@Loop\n            }\n\n\
+    \            // Если пользователь введёт команду \"/exit\", то пользователь те\
+    м самым выйдет из калькулятора\n            \"/exit\" in inputList -> {\n    \
+    \            println(\"Bye!\"); break@Loop\n            }\n            \n    \
+    \        // если ничего не веденно, то игнорируем\n            inputList.size\
+    \ == 1 -> continue@Loop\n\n            // Если не распознанно специяальных ком\
+    анд, то мы отсортируем наш пользовательский ввод,\n            // Получим резу\
+    льтат и напечатаем его\n            else -> {\n                val sortList =\
+    \ BulkheadForSort(inputList).bulkheadForSort()\n                println(\"${Calculator(sortList).recipientValue()}\"\
+    )\n            }\n        }\n    }\n}\n\n\n/*\n * Создание класса калькулятора\
+    , который примет отсортированный лист чисели операций. Его единственная функци\
+    я\n * создаст возращаемую переменную value, в которое будет помещенно первое з\
+    начение, введённое пользователемю\n * Так же в ней перебирается полученный отс\
+    ортированный массив и пребавляется или вычитается (в зависимости от ситуации)\n\
+    \ * значение в переменную value\n */\n\nclass Calculator(_sortList: List<String>)\
+    \ {\n    private val sortList = _sortList    // создаём поле для манипуляции с\
+    \ отсортированным вводом\n\n    fun recipientValue(): Int {\n        var value\
+    \ = this.sortList[1].toInt()    // записываем в результат первую цифру, введён\
+    ную пользоватлем\n        for (i in this.sortList.indices) {  // проходимся по\
+    \ массиву\n            when (this.sortList[i]) {\n                \"+\" -> value\
+    \ += sortList[i + 1].toInt() // если встреченно значение \"+\", то прибавляем\
+    \ следуещее число\n                \"-\" -> value -= sortList[i + 1].toInt() //\
+    \ если встреченно значение \"-\", то вычитаем следуещее число\n            }\n\
+    \        }\n        return value - this.sortList[1].toInt()   // выдаём резуль\
+    тат\n    }\n}\n\n\n/*\n * Создание класса, принемающий пользовательский ввод.\
+    \ В нем функции сортируют пользовательский ввод ( пропускает\n * только числа\
+    \ с  доступными операциями - \"-\", \"+\" операциями, игнорирует пробелы, а та\
+    к же преобразует выражения,\n * по типу \"---\", \"++++\" в более прростые ) и\
+    \ помещают эти отсортированные значения в своё возращаемое значение.\n */\n\n\
+    class BulkheadForSort(_inputList: List<String>) {\n    private val listNumbers\
+    \ = mutableListOf<String>()   // создадим массив для ввода туда отфильтрованны\
+    х частей\n    private val inputList = _inputList  // получаем пользовательский\
+    \ ввод для с ней монипуляциями\n    private var indexOperation = \"+\"    // п\
+    редварительное значение для встречной операции\n\n    fun bulkheadForSort(): MutableList<String>\
+    \ {\n        val listPossibleOperation = mutableListOf(\"+\", \"-\") // запише\
+    м доступные действия\n        loop@ for (j in this.inputList.indices) {   // п\
+    роходим по пользовательскому вводу\n            try {\n                this.inputList[j].toInt()\
+    \   // проверка на, то что это число\n                this.listNumbers.add(this.inputList[j])\
+    \ // если это число добавим его в наш лист (фильтровочный список)\n          \
+    \  } catch (_: Exception) {\n                when {\n                    // иг\
+    норируем все лишние пробелы\n                    this.inputList[j] == \"\" ->\
+    \ continue@loop\n                    // если это было не число, то проверим до\
+    ступная ли это операция (если да, то мы её добавим в лист)\n                 \
+    \   this.inputList[j] in listPossibleOperation -> this.listNumbers.add(this.inputList[j])\n\
+    \                    // если это операция с двойным плюсом или минусом, то мы\
+    \ добавим в лист \"+\"\n                    this.inputList[j].length % 2 == 0\
+    \ -> this.listNumbers.add(\"+\")\n                    this.inputList[j].length\
+    \ % 2 == 1 -> {\n                        counterPlusAndMinus(j)  // определяем\
+    \ сокращённую запись для выражений: \"----\", \"+++\"\n                      \
+    \  this.listNumbers.add(this.indexOperation)   // добавляем получинную сокращё\
+    нную запись\n                    }\n                }\n                continue@loop\
+    \   // если ничего из этого не подходим, то пропусним этот элемент\n         \
+    \   }\n        }\n        return this.listNumbers  // возвращаем отфильтрованн\
+    ый список\n    }\n\n    private fun counterPlusAndMinus(index: Int) {\n      \
+    \  // принемаем индекс пользоватеского ввода, по которому будем искать правиль\
+    ную сокращённую запись\n        when(this.inputList[index][0]) {\n           \
+    \ '+' -> this.indexOperation = \"+\"    // если это выражение начинается с \"\
+    +\", то мы запомним выражение как \"+\"\n            '-' -> this.indexOperation\
+    \ = \"-\"    // если это выражение начинается с \"-\", то мы запомним выражени\
+    е как \"-\"\n        }\n    }\n}\n"
+  learner_created: false
+- name: test/Test.java
+  visible: false
+  text: |
+    import org.hyperskill.hstest.stage.StageTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+    import org.hyperskill.hstest.testcase.TestCase;
+    import org.hyperskill.hstest.testing.TestedProgram;
+
+    import java.util.Arrays;
+    import java.util.List;
+
+    public class Test extends StageTest<String> {
+
+        @Override
+        public List<TestCase<String>> generate() {
+            return Arrays.asList(
+                new TestCase<String>().setDynamicTesting(() -> {
+                    TestedProgram main = new TestedProgram();
+
+                    // tests of functionality of previous steps
+                    main.start();
+
+                    // test of /help
+                    String output = main.execute("/help").trim();
+                    if (output.length() < 4) {
+                        return CheckResult.wrong(
+                            "It seems like there was no any \"help\" message.");
+                    }
+
+                    // input empty string
+                    output = main.execute("");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Incorrect response to an empty string. " +
+                            "The program should not print anything.");
+                    }
+
+                    // sum of positive numbers
+                    output = main.execute("5 + 1 + 4").trim();
+                    if (!output.equals("10")) {
+                        return CheckResult.wrong(
+                            "The program cannot sum more than two numbers.");
+                    }
+
+                    // sum of numbers with different signs & negative answer
+                    output = main.execute("23 - 17 - 13").trim();
+                    if (!output.equals("-7")) {
+                        return CheckResult.wrong(
+                            "Incorrect sum of positive and negative numbers.");
+                    }
+
+                    // testing a big amount of numbers
+                    output = main.execute("33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4").trim();
+                    if (!output.equals("-3")) {
+                        return CheckResult.wrong
+                            ("The program cannot process a large number of numbers.");
+                    }
+
+                    // the sum of the numbers is zero
+                    output = main.execute("11 - 7 - 4").trim();
+                    if (!output.equals("0")) {
+                        return CheckResult.wrong(
+                            "The problem when sum is equal to 0 has occurred.");
+                    }
+
+                    // test of a nonexistent command
+                    output = main.execute("/start").trim().toLowerCase();
+                    if (!output.startsWith("unknown")) {
+                        return CheckResult.wrong(
+                            "The program should print \"Unknown command\" " +
+                            "when a nonexistent command is entered.");
+                    }
+
+                    // test of /exit
+                    output = main.execute("/exit").trim().toLowerCase();
+                    if (!output.startsWith("bye")) {
+                        return CheckResult.wrong(
+                            "Your program didn't print \"bye\" after entering \"/exit\".");
+                    }
+
+                    return new CheckResult(main.isFinished(),
+                        "Your program should exit after entering \"/exit\".");
+                }),
+                new TestCase<String>().setDynamicTesting(() -> {
+                    TestedProgram main = new TestedProgram();
+
+                    // testing different assignments
+                    main.start();
+
+                    // testing basic assignment
+                    String output = main.execute("n = 5");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // assignment without spaces
+                    output = main.execute("m=2");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // assignment with extra spaces
+                    output = main.execute("a    =  7");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // assign the value of another variable
+                    output = main.execute("c=  a ");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // test printing values of the variables
+                    output = main.execute("a").trim();
+                    if (!output.equals("7")) {
+                        return CheckResult.wrong("The variable stores not a correct value.");
+                    }
+
+                    output = main.execute("c").trim();
+                    if (!output.equals("7")) {
+                        return CheckResult.wrong(
+                            "The variable stores not a correct value." +
+                            "May be the program could not assign the value " +
+                                "of one variable to another one.");
+                    }
+
+                    // trying to assign a new variable after printing
+                    output = main.execute("test = 0");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // check if assignment was successful
+                    output = main.execute("test").trim();
+                    if (!output.equals("0")) {
+                        return CheckResult.wrong("The variable stores not a correct value.");
+                    }
+
+                    // trying to reassign
+                    output = main.execute("test = 1");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // trying to reassign with the value of another variable
+                    output = main.execute("a = test");
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    output = main.execute("a").trim();
+                    if (!output.equals("1")) {
+                        return CheckResult.wrong("The program could not reassign variable.");
+                    }
+
+                    // test of /exit
+                    output = main.execute("/exit").trim().toLowerCase();
+                    if (!output.startsWith("bye")) {
+                        return CheckResult.wrong(
+                            "Your program didn't print \"bye\" after entering \"/exit\".");
+                    }
+
+                    return new CheckResult(main.isFinished(),
+                        "Your program should exit after entering \"/exit\".");
+                }),
+
+                new TestCase<String>().setDynamicTesting(() -> {
+                    TestedProgram main = new TestedProgram();
+
+                    // testing operations with variables
+                    main.start();
+
+                    // created some variables
+                    String output = main.execute("a = 9\nb=2\nc = 1").trim();
+                    if (output.length() != 0) {
+                        return CheckResult.wrong(
+                            "Unexpected reaction after assignment." +
+                            "The program should not print anything in this case.");
+                    }
+
+                    // testing simple sum
+                    output = main.execute("a + b").trim();
+                    if (!output.equals("11")) {
+                        return CheckResult.wrong(
+                            "The program cannot perform operations with variables. " +
+                            "For example, addition operation.");
+                    }
+
+                    // subtraction testing
+                    output = main.execute("b - a").trim();
+                    if (!output.equals("-7")) {
+                        return CheckResult.wrong(
+                            "The program cannot perform operations with variables. " +
+                            "For example, subtraction operation.");
+                    }
+
+                    // adding a negative number
+                    output = main.execute("b + c").trim();
+                    if (!output.equals("3")) {
+                        return CheckResult.wrong(
+                            "The program cannot perform operations with variables. " +
+                            "For example, addition operation.");
+                    }
+
+                    // subtraction of negative number
+                    output = main.execute("b - c").trim();
+                    if (!output.equals("1")) {
+                        return CheckResult.wrong(
+                            "The program cannot perform operations with variables. " +
+                            "For example, subtraction operation.");
+                    }
+
+                    // testing multiple operations
+                    output = main.execute("a -- b - c + 3 --- a ++ 1").trim();
+                    if (!output.equals("5")) {
+                        return CheckResult.wrong(
+                            "The program cannot perform several operations in one line.");
+                    }
+
+                    // test of /exit
+                    output = main.execute("/exit").trim().toLowerCase();
+                    if (!output.startsWith("bye")) {
+                        return CheckResult.wrong(
+                            "Your program didn't print \"bye\" after entering \"/exit\".");
+                    }
+
+                    return new CheckResult(main.isFinished(),
+                        "Your program should exit after entering \"/exit\".");
+                }),
+                new TestCase<String>().setDynamicTesting(() -> {
+                    TestedProgram main = new TestedProgram();
+
+                    // a set of negative tests
+                    main.start();
+
+                    // testing invalid variable name
+                    String output = main.execute("var1 = 1").trim().toLowerCase();
+                    if (!output.startsWith("invalid")) {
+                        return CheckResult.wrong(
+                            "The name of variable should contain only Latin letters.");
+                    }
+                    output = main.execute("кириллица = 123").trim().toLowerCase();
+                    if (!output.startsWith("invalid")) {
+                        return CheckResult.wrong(
+                            "The name of variable should contain only Latin letters.");
+                    }
+
+                    // testing invalid value
+                    output = main.execute("var = 2a").trim().toLowerCase();
+                    if (!output.startsWith("invalid")) {
+                        return CheckResult.wrong(
+                            "The value can be an integer number or a value of another variable.");
+                    }
+
+                    // testing multiple equalization
+                    output = main.execute("c = 7 - 1 = 5").trim().toLowerCase();
+                    if (!output.startsWith("invalid")) {
+                        return CheckResult.wrong(
+                            "The program could not handle a invalid assignment.");
+                    }
+
+                    // testing assignment by unassigned variable
+                    output = main.execute("variable = f").trim().toLowerCase();
+                    if (!(output.startsWith("unknown") || output.startsWith("invalid"))) {
+                        return CheckResult.wrong(
+                            "The program should not allow an assignment by unassigned variable.");
+                    }
+
+                    // checking case sensitivity
+                    main.execute("variable = 777");
+                    output = main.execute("Variable").trim().toLowerCase();
+                    if (!output.startsWith("unknown")) {
+                        return CheckResult.wrong("The program should be case sensitive.");
+                    }
+
+                    // test of /exit
+                    output = main.execute("/exit").trim().toLowerCase();
+                    if (!output.startsWith("bye")) {
+                        return CheckResult.wrong(
+                            "Your program didn't print \"bye\" after entering \"/exit\".");
+                    }
+
+                    return new CheckResult(main.isFinished(),
+                        "Your program should exit after entering \"/exit\".");
+                })
+            );
+        }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/7814#comment
+status: Unchecked
+record: -1
